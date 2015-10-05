@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#4CACAA</color>
+    <color name="primary_dark">#469F9D</color>
+    <color name="secondary">#666666</color>
+    <color name="secondary_dark">#545454</color>
+
+    <color name="green">#96C56A</color>
+    <color name="red">#F0824F</color>
+    <color name="grey">#666666</color>
+
+    <color name="background">#E9E9E9</color>
+    <color name="focused">#22000000</color>
+    <color name="pressed">#33000000</color>
+    <color name="controls">#55FFFFFF</color>
+
+    <color name="text_color">#333</color>
+    <color name="secondary_text_color">#444</color>
+</resources>

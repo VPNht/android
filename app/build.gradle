@@ -1,0 +1,128 @@
+import groovy.swing.SwingBuilder
+
+buildscript {
+    repositories {
+        jcenter()
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.19.1'
+        classpath 'com.ofg:uptodate-gradle-plugin:1.5.0'
+    }
+}
+
+apply plugin: 'com.ofg.uptodate'
+apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
+
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.0"
+
+    defaultConfig {
+        applicationId "ht.vpn.android"
+        minSdkVersion 15
+        targetSdkVersion 23
+        versionCode 15
+        versionName "1.2.2"
+        resValue "string", "geokey", System.getenv("VPNHT_GEO_KEY").toString()
+    }
+
+    signingConfigs {
+        mainConfig {
+            storeFile file(System.getenv("VPNHT_SIGN_STORE_FILE").toString())
+            keyAlias System.getenv("VPNHT_KEY_ALIAS").toString()
+            keyPassword 'password' // Fictive password to pass Gradle check
+            storePassword 'password' // Fictive password to pass Gradle check
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.mainConfig
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            applicationIdSuffix ".dev"
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:support-v13:23.0.1'
+    compile 'com.android.support:appcompat-v7:23.0.1'
+    compile 'com.android.support:cardview-v7:23.0.1'
+    compile 'com.android.support:recyclerview-v7:23.0.1'
+    compile 'com.android.support:design:23.0.1'
+    compile 'com.android.support:support-annotations:23.0.1'
+    compile 'com.google.android.gms:play-services-maps:7.8.0'
+    compile 'com.github.johnkil.android-robototextview:robototextview:2.4.0'
+    compile 'com.jakewharton:butterknife:7.0.1'
+    compile 'com.mobsandgeeks:android-saripaar:2.0.2'
+    compile 'com.squareup.retrofit:retrofit:1.9.0'
+    compile 'com.jakewharton.timber:timber:3.1.0'
+    compile('com.crashlytics.sdk.android:crashlytics:2.2.4@aar') {
+        transitive = true;
+    }
+}
+
+gradle.taskGraph.whenReady { taskGraph ->
+    if(taskGraph.hasTask(':app:assembleRelease')) {
+
+        def pass = System.getenv("VPNHT_ALIAS_KEY") ? System.getenv("VPNHT_ALIAS_KEY").toString() : ''
+        def store_pass = System.getenv("VPNHT_STORE_KEY") ? System.getenv("VPNHT_STORE_KEY").toString() : ''
+        if(pass == '' || store_pass == '') {
+            if (System.console() == null) {
+                new SwingBuilder().edt {
+                    dialog(modal: true, // Otherwise the build will continue running before you closed the dialog
+                            title: 'Enter password', // Dialog title
+                            alwaysOnTop: true, // pretty much what the name says
+                            resizable: false, // Don't allow the user to resize the dialog
+                            locationRelativeTo: null, // Place dialog in center of the screen
+                            pack: true, // We need to pack the dialog (so it will take the size of it's children)
+                            show: true // Let's show it
+                    ) {
+                        vbox { // Put everything below each other
+                            label(text: "Please enter storage passphrase:")
+                            input = passwordField()
+                            button(defaultButton: true, text: 'OK', actionPerformed: {
+                                store_pass = input.password;
+                                // Set pass variable to value of input field
+                                dispose(); // Close dialog
+                            })
+                        } // vbox end
+                        vbox { // Put everything below each other
+                            label(text: "Please enter key passphrase:")
+                            input = passwordField()
+                            button(defaultButton: true, text: 'OK', actionPerformed: {
+                                pass = input.password; // Set pass variable to value of input field
+                                dispose(); // Close dialog
+                            })
+                        } // vbox end
+                    } // dialog end
+                } // edt end
+            } else {
+                store_pass = System.console().readPassword("\nPlease enter storage passphrase: ")
+                store_pass = new String(store_pass)
+                pass = System.console().readPassword("\nPlease enter key passphrase: ")
+                pass = new String(pass)
+            }
+
+            if (pass.size() <= 0) {
+                throw new InvalidUserDataException("You must enter a password to proceed.")
+            }
+        }
+
+        android.signingConfigs.mainConfig.keyPassword = pass
+        android.signingConfigs.mainConfig.storePassword = store_pass
+
+    } // end if has task
+} // end whenReady
