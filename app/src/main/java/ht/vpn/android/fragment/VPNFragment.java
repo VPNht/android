@@ -114,7 +114,11 @@ public class VPNFragment extends BaseFragment implements VpnStatus.LogListener, 
 
         VpnStatus.addLogListener(this);
         VpnStatus.addStateListener(this);
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
         updateIPData();
     }
 
