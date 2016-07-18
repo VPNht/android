@@ -6,6 +6,8 @@ import android.location.Geocoder;
 import android.net.VpnService;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.CardView;
@@ -30,6 +32,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -114,11 +117,7 @@ public class VPNFragment extends BaseFragment implements VpnStatus.LogListener, 
 
         VpnStatus.addLogListener(this);
         VpnStatus.addStateListener(this);
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
         updateIPData();
     }
 
@@ -319,6 +318,8 @@ public class VPNFragment extends BaseFragment implements VpnStatus.LogListener, 
         public void failure(RetrofitError error) {
             if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
                 mActivity.startLoginActivity();
+            } else if (error.getCause() instanceof SocketTimeoutException){
+                updateIPData();
             }
         }
     };
@@ -397,7 +398,12 @@ public class VPNFragment extends BaseFragment implements VpnStatus.LogListener, 
         mCurrentVPNState = level;
 
         if(level.equals(VpnStatus.ConnectionStatus.LEVEL_CONNECTED) || level.equals(VpnStatus.ConnectionStatus.LEVEL_NOTCONNECTED)) {
-            updateIPData();
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    updateIPData();
+                }
+            }, 500);
             ConnectingDialogFragment.dismiss(getChildFragmentManager());
             DisconnectingDialogFragment.dismiss(getChildFragmentManager());
         }
