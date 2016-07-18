@@ -11,27 +11,28 @@
         android:name=".VPNhtApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
+        android:banner="@drawable/banner"
         android:label="@string/app_name"
         android:theme="@style/Theme.VPNht">
 
         <activity
-            android:name=".activities.MainActivity"
-            android:screenOrientation="sensorPortrait">
+            android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
         </activity>
 
         <activity
             android:name=".activities.LoginActivity"
             android:theme="@style/Theme.VPNht.Login"
-            android:screenOrientation="sensorPortrait"
             />
-        <activity android:name=".activities.PreferencesActivity"
-            android:screenOrientation="sensorPortrait" />
-        <activity android:name=".activities.LogActivity"
-            android:screenOrientation="sensorPortrait" />
+        <activity android:name=".activities.PreferencesActivity" />
+        <activity android:name=".activities.LogActivity" />
 
         <activity android:name=".activities.GrantPermissionsActivity">
             <intent-filter>
