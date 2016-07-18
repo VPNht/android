@@ -1,4 +1,4 @@
-package ht.vpn.android.dialogfragment;
+package ht.vpn.android.fragment.dialog;
 
 
 import android.app.Dialog;
