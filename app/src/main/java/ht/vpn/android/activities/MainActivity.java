@@ -33,9 +33,6 @@ public class MainActivity extends BaseActivity implements VpnStatus.StateListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState, R.layout.activity_main);
 
-        // Needs for compat with first version of engine:
-        Preferences.movePreferences(this, Preferences.FILE_NAME);
-
         if(!PrefUtils.contains(this, Preferences.USERNAME) || !PrefUtils.contains(this, Preferences.PASSWORD)) {
             startLoginActivity();
         }

@@ -18,7 +18,7 @@ import butterknife.Bind;
 import butterknife.OnClick;
 import ht.vpn.android.Preferences;
 import ht.vpn.android.R;
-import ht.vpn.android.dialogfragment.LoadingDialogFragment;
+import ht.vpn.android.fragment.dialog.LoadingDialogFragment;
 import ht.vpn.android.network.VPNService;
 import ht.vpn.android.network.responses.ServersResponse;
 import ht.vpn.android.utils.PrefUtils;
