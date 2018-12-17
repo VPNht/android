@@ -1,0 +1,50 @@
+<resources>
+
+    <string name="app_name">VPN.ht</string>
+    <string name="unknown_error">Quelque chose s\'est mal passé.</string>
+    <string name="no_internet">Il n\'y a pas de connection Internet disponible</string>
+
+    <!-- LoginActivity -->
+    <string name="username">Identifiant</string>
+    <string name="password">Mot de passe</string>
+    <string name="login">Connexion</string>
+    <string name="signup">Enregistrement</string>
+    <string name="credentials_incorrect">L'identifiant ou le mot de passe est erroné</string>
+
+    <!-- MainActivity -->
+    <string name="preferences">Préférences</string>
+    <string name="logout">Déconnexion</string>
+    <string name="open_logs">Ouvrir les logs</string>
+
+    <!-- VPN Fragment -->
+    <string name="vpn_connected_header">VOUS ÊTES CONNECTÉ</string>
+    <string name="ip_address">Adresse IP:</string>
+    <string name="location">Emplacement:</string>
+    <string name="nearest">Serveur le plus près</string>
+    <string name="firewall">Je suis derrière un parefeu</string>
+    <string name="connect">CONNECTER</string>
+    <string name="disconnect">DÉCONNECTER</string>
+    <string name="unknown">Inconnu</string>
+    <string name="disconnecting">Déconnection</string>
+    <string name="reboot_title">Redémarrage requis</string>
+    <string name="reboot_message">VPN.ht n\'a pas été en mesude se se connecter au service VPN d\'Android. Veuillez redémarrer votre appareil pour résoudre ce problème.</string>
+    <string name="no_server_selected">Aucun serveur sélectionné</string>
+
+    <!-- PreferencesActivity -->
+    <string name="behaviour">Comportement</string>
+    <string name="connection">Connection</string>
+    <string name="reconnect_reboot">Reconnecter au redémarrage</string>
+    <string name="reconnect_reboot_summary">VPN.ht va se reconnecter s\'il était actif au redémarrage ou à l\'arrêt.</string>
+    <string name="press_logout">Appuyer pour vous déconnecter</string>
+    <string name="account">Compte</string>
+    <string name="killswitch">Activer l\'arrêt d\'urgence</string>
+    <string name="killswitch_summary">l\'arrêt d\'urgence va arrêter votre connection Internet si une erreur de connection survient</string>
+    <string name="smartdns">Activer le DNS intelligent</string>
+    <string name="smartdns_summary">Accédez à Netflix, Hulu, Pandora et autres services pendant que vous êtes connecté à n\'importe quel serveur</string>
+    <string name="not_used_firewal">Note: non utilisé quand l\'option de parefeu est activée</string>
+    <string name="cipher">Code d\'encryption</string>
+
+    <!-- LogActivity -->
+    <string name="logs">Logs</string>
+
+</resources>
