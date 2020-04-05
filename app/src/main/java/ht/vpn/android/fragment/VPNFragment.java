@@ -371,7 +371,11 @@ public class VPNFragment extends BaseFragment implements VpnStatus.LogListener, 
                 }
                 mMarkers.put(marker, spinnerList.size());
 
-                spinnerList.add(server.country);
+                if (server.countryCode != null && server.location != null) {
+                    spinnerList.add(String.format("%s, %s", server.location, server.country));
+                } else {
+                    spinnerList.add(server.country);
+                }
             }
 
             final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(mActivity, R.layout.simple_spinner_item, spinnerList);
