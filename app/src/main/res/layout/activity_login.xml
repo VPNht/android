@@ -17,7 +17,7 @@
         android:contentDescription="@string/app_name"
         android:scaleType="fitCenter" />
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/usernameInputLayout"
         android:layout_below="@id/logo"
         android:layout_width="match_parent"
@@ -26,15 +26,15 @@
         android:layout_marginLeft="@dimen/login_horizontal_margin"
         android:layout_marginRight="@dimen/login_horizontal_margin"
         android:layout_marginTop="@dimen/activity_vertical_margin">
-        <com.devspark.robototextview.widget.RobotoEditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/usernameEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/username"
             android:inputType="text" />
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/passwordInputLayout"
         android:layout_below="@id/usernameInputLayout"
         android:layout_width="match_parent"
@@ -43,15 +43,15 @@
         android:layout_marginLeft="@dimen/login_horizontal_margin"
         android:layout_marginRight="@dimen/login_horizontal_margin"
         android:layout_marginTop="@dimen/activity_small_margin">
-        <com.devspark.robototextview.widget.RobotoEditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/passwordEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/password"
             android:inputType="textPassword" />
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <com.devspark.robototextview.widget.RobotoButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/loginButton"
         android:layout_below="@id/passwordInputLayout"
         android:layout_width="match_parent"
@@ -63,7 +63,7 @@
         android:text="@string/login"
         android:theme="@style/Theme.VPNht.PrimaryButton" />
 
-    <com.devspark.robototextview.widget.RobotoButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/registerButton"
         android:layout_below="@id/loginButton"
         android:layout_width="match_parent"

@@ -9,7 +9,7 @@
     <string name="password">Mot de passe</string>
     <string name="login">Connexion</string>
     <string name="signup">Enregistrement</string>
-    <string name="credentials_incorrect">L'identifiant ou le mot de passe est erroné</string>
+    <string name="credentials_incorrect">L\'identifiant ou le mot de passe est erroné</string>
 
     <!-- MainActivity -->
     <string name="preferences">Préférences</string>

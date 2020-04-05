@@ -1,18 +1,12 @@
 package ht.vpn.android.activities;
 
-import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
-import android.net.VpnService;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -20,7 +14,6 @@ import de.blinkt.openvpn.core.OpenVPNService;
 import de.blinkt.openvpn.core.VpnStatus;
 import ht.vpn.android.Preferences;
 import ht.vpn.android.R;
-import ht.vpn.android.VPNhtApplication;
 import ht.vpn.android.utils.NetworkUtils;
 import ht.vpn.android.utils.PrefUtils;
 

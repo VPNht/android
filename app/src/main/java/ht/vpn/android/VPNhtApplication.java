@@ -2,12 +2,10 @@ package ht.vpn.android;
 
 import android.app.Application;
 
-import com.crashlytics.android.Crashlytics;
 
 import de.blinkt.openvpn.core.PRNGFixes;
 import de.blinkt.openvpn.core.VpnStatus;
 import ht.vpn.android.utils.PrefUtils;
-import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
 
 public class VPNhtApplication extends Application implements VpnStatus.StateListener {
@@ -19,7 +17,6 @@ public class VPNhtApplication extends Application implements VpnStatus.StateList
     public void onCreate() {
         super.onCreate();
         PRNGFixes.apply();
-        Fabric.with(this, new Crashlytics());
         sThis = this;
 
         if (BuildConfig.DEBUG) {

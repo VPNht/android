@@ -3,13 +3,13 @@ package ht.vpn.android.activities;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,7 +18,6 @@ import java.util.List;
 import butterknife.Bind;
 import ht.vpn.android.Preferences;
 import ht.vpn.android.R;
-import ht.vpn.android.VpnProfile;
 import ht.vpn.android.content.PrefItem;
 import ht.vpn.android.content.adapters.PreferencesListAdapter;
 import ht.vpn.android.fragment.dialog.StringArraySelectorDialogFragment;

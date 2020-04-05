@@ -6,10 +6,9 @@
 package de.blinkt.openvpn.core;
 
 import android.os.Build;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
-import junit.framework.Assert;
+import androidx.annotation.NonNull;
 
 import java.math.BigInteger;
 import java.net.Inet6Address;
@@ -145,22 +144,15 @@ public class NetworkSpace {
         public ipAddress[] split() {
             ipAddress firstHalf = new ipAddress(getFirstAddress(), networkMask + 1, included, isV4);
             ipAddress secondHalf = new ipAddress(firstHalf.getLastAddress().add(BigInteger.ONE), networkMask + 1, included, isV4);
-            if (BuildConfig.DEBUG) Assert.assertTrue(secondHalf.getLastAddress().equals(getLastAddress()));
             return new ipAddress[]{firstHalf, secondHalf};
         }
 
         String getIPv4Address() {
-            if (BuildConfig.DEBUG) {
-                Assert.assertTrue (isV4);
-                Assert.assertTrue (netAddress.longValue() <= 0xffffffffl);
-                Assert.assertTrue (netAddress.longValue() >= 0);
-            }
             long ip = netAddress.longValue();
             return String.format(Locale.US, "%d.%d.%d.%d", (ip >> 24) % 256, (ip >> 16) % 256, (ip >> 8) % 256, ip % 256);
         }
 
         String getIPv6Address() {
-            if (BuildConfig.DEBUG) Assert.assertTrue (!isV4);
             BigInteger r = netAddress;
             if (r.compareTo(BigInteger.ZERO)==0 && networkMask==0)
                 return "::";
@@ -236,7 +228,6 @@ public class NetworkSpace {
             // Check if it and the next of it are compatible
             ipAddress nextNet = networks.poll();
 
-            if (BuildConfig.DEBUG) Assert.assertNotNull(currentNet);
             if (nextNet== null || currentNet.getLastAddress().compareTo(nextNet.getFirstAddress()) == -1) {
                 // Everything good, no overlapping nothing to do
                 ipsDone.add(currentNet);
@@ -260,21 +251,13 @@ public class NetworkSpace {
                         if (!networks.contains(newNets[1]))
                             networks.add(newNets[1]);
 
-                        if (newNets[0].getLastAddress().equals(currentNet.getLastAddress())) {
-                            if (BuildConfig.DEBUG) Assert.assertEquals (newNets[0].networkMask, currentNet.networkMask);
-                            // Don't add the lower half that would conflict with currentNet
-                        } else {
+                        if (!newNets[0].getLastAddress().equals(currentNet.getLastAddress())) {
                             if (!networks.contains(newNets[0]))
                                 networks.add(newNets[0]);
                         }
                         // Keep currentNet as is
                     }
                 } else {
-                    if (BuildConfig.DEBUG) {
-                        Assert.assertTrue(currentNet.networkMask < nextNet.networkMask);
-                        Assert.assertTrue (nextNet.getFirstAddress().compareTo(currentNet.getFirstAddress()) == 1);
-                        Assert.assertTrue (currentNet.getLastAddress().compareTo(nextNet.getLastAddress()) != -1);
-                    }
                     // This network is bigger than the next and last ip of current >= next
 
                     //noinspection StatementWithEmptyBody
@@ -287,11 +270,6 @@ public class NetworkSpace {
 
 
                         if (newNets[1].networkMask == nextNet.networkMask) {
-                            if (BuildConfig.DEBUG) {
-                                Assert.assertTrue (newNets[1].getFirstAddress().equals(nextNet.getFirstAddress()));
-                                Assert.assertTrue (newNets[1].getLastAddress().equals(currentNet.getLastAddress()));
-                                // split second equal the next network, do not add it
-                            }
                             networks.add(nextNet);
                         } else {
                             // Add the smaller network first
@@ -312,39 +290,10 @@ public class NetworkSpace {
     Collection<ipAddress> getPositiveIPList() {
         TreeSet<ipAddress> ipsSorted = generateIPList();
 
-        Vector<ipAddress> ips = new Vector<ipAddress>();
+        Vector<ipAddress> ips = new Vector<>();
         for (ipAddress ia : ipsSorted) {
             if (ia.included)
                 ips.add(ia);
-        }
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-            // Include postive routes from the original set under < 4.4 since these might overrule the local
-            // network but only if no smaller negative route exists
-            for(ipAddress origIp: mIpAddresses){
-                if (!origIp.included)
-                    continue;
-
-                // The netspace exists
-                if(ipsSorted.contains(origIp))
-                    continue;
-
-                boolean skipIp=false;
-                // If there is any smaller net that is excluded we may not add the positive route back
-
-                for (ipAddress calculatedIp: ipsSorted) {
-                    if(!calculatedIp.included && origIp.containsNet(calculatedIp)) {
-                        skipIp=true;
-                        break;
-                    }
-                }
-                if (skipIp)
-                    continue;
-
-                // It is safe to include the IP
-                ips.add(origIp);
-            }
-
         }
 
         return ips;

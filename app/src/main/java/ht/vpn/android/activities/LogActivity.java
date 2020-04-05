@@ -1,7 +1,8 @@
 package ht.vpn.android.activities;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
+
+import androidx.appcompat.app.ActionBar;
 
 import ht.vpn.android.R;
 import ht.vpn.android.fragment.LogFragment;
