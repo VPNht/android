@@ -4,12 +4,16 @@ import android.content.SharedPreferences;
 
 import java.util.ArrayList;
 
+import de.blinkt.openvpn.core.VpnStatus;
 import ht.vpn.android.Preferences;
 import ht.vpn.android.network.responses.Server;
 
 public class VPNHTConfig {
 
     public static String generate(SharedPreferences preferences, Server server, Boolean firewall) {
+        VpnStatus.logInfo("Connecting to server: " + server.hostname + " " + server.countryCode);
+        VpnStatus.logInfo("Firewall option enabled: " + firewall);
+
         ArrayList<String> stringList = new ArrayList<>();
 
         stringList.add("client");

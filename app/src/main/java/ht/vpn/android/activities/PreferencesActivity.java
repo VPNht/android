@@ -93,7 +93,7 @@ public class PreferencesActivity extends BaseActivity {
 
         mPrefItems.add(getString(R.string.connection));
 
-        final List<String> options = Arrays.asList("BF-CBC", "AES-128-CBC", "AES-256-CBC");
+        final List<String> options = Arrays.asList("AES-128-CBC", "AES-256-CBC");
         mPrefItems.add(new PrefItem(this, R.drawable.ic_prefs_encryption, R.string.cipher, Preferences.ENC_TYPE, "AES-128-CBC",
                 new PrefItem.OnClickListener() {
                     @Override

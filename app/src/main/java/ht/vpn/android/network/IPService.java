@@ -6,15 +6,20 @@ import retrofit.http.GET;
 
 public class IPService {
     private static final String API_URL = "https://myip.ht/";
+    private static final String API_FALLBACK_URL = "https://check.myip.ht:8080/";
     private Client mClient;
 
-    private IPService() {
-        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(API_URL).setRequestInterceptor(new UserAgentInterceptor()).build();
+    private IPService(String url) {
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(url).setRequestInterceptor(new UserAgentInterceptor()).build();
         mClient = restAdapter.create(Client.class);
     }
 
     public static IPService.Client get() {
-        return new IPService().mClient;
+        return new IPService(API_URL).mClient;
+    }
+
+    public static IPService.Client getFallback() {
+        return new IPService(API_FALLBACK_URL).mClient;
     }
 
     public interface Client {

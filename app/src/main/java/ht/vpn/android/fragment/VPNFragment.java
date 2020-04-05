@@ -35,6 +35,7 @@ import com.google.android.material.snackbar.Snackbar;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -231,6 +232,7 @@ public class VPNFragment extends BaseFragment implements VpnStatus.LogListener, 
                     mCurrentPosMarker.setVisible(false);
             }
         });
+
         IPService.get().status(mIPCallback);
     }
 
@@ -269,7 +271,11 @@ public class VPNFragment extends BaseFragment implements VpnStatus.LogListener, 
     private Callback<IPService.Data> mIPCallback = new Callback<IPService.Data>() {
         @Override
         public void success(final IPService.Data data, Response response) {
-            if(mActivity == null) return;
+            Timber.d("Updated IP data");
+            if(mActivity == null) {
+                Timber.d("Returning because mActivity is null");
+                return;
+            }
 
             if(response != null && response.getStatus() == 200) {
                 mShowsConnected = data.connected;
@@ -331,9 +337,13 @@ public class VPNFragment extends BaseFragment implements VpnStatus.LogListener, 
 
         @Override
         public void failure(RetrofitError error) {
-            Timber.e(error.getMessage());
+            Timber.e("Error getting IP data %s %s", error.getMessage(), error.getCause());
             if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
                 mActivity.startLoginActivity();
+            } else if (error.getCause() instanceof UnknownHostException) {
+                if (!error.getMessage().contains("check")) {
+                    IPService.getFallback().status(mIPCallback);
+                }
             } else if (error.getCause() instanceof SocketTimeoutException){
                 updateIPData();
             }
