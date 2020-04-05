@@ -49,12 +49,6 @@ public class VPNHTConfig {
         stringList.add("fast-io");
         stringList.add("auth-nocache");
 
-        if(!preferences.getBoolean(Preferences.SMARTDNS, true)) {
-            stringList.add("route-nopull");
-            stringList.add("redirect-gateway def1");
-            stringList.add("dhcp-option DNS 10.11.0.1");
-        }
-
         if(firewall) {
             stringList.add(String.format("cipher %s", "AES-128-CBC"));
         } else {
@@ -149,11 +143,6 @@ public class VPNHTConfig {
                 break;
             case "AES-128-CBC":
                 for(int i = 1194; i < 1201; i++) {
-                    stringList.add(Integer.toString(i));
-                }
-                break;
-            case "BF-CBC":
-                for(int i = 1202; i < 1206; i++) {
                     stringList.add(Integer.toString(i));
                 }
                 break;

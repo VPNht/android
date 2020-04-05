@@ -3,7 +3,6 @@ package ht.vpn.android.network;
 import android.util.Base64;
 
 import ht.vpn.android.network.responses.ServersResponse;
-import ht.vpn.android.network.responses.SmartDNSResponse;
 import retrofit.Callback;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
@@ -43,7 +42,5 @@ public class VPNService {
     public interface Client {
         @GET("/servers")
         void servers(Callback<ServersResponse> callback);
-        @GET("/smartdns")
-        void smartdns(Callback<SmartDNSResponse> callback);
     }
 }

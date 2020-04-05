@@ -114,22 +114,6 @@ public class PreferencesActivity extends BaseActivity {
             )
         );
 
-        mPrefItems.add(new PrefItem(this, R.drawable.ic_prefs_smartdns, R.string.smartdns, Preferences.SMARTDNS, true,
-                new PrefItem.OnClickListener() {
-                    @Override
-                    public void onClick(PrefItem item) {
-                        item.saveValue(!(Boolean) item.getValue());
-                    }
-                },
-                new PrefItem.SubTitleGenerator() {
-                    @Override
-                    public String get(PrefItem item) {
-                        return getString(R.string.smartdns_summary);
-                    }
-                }
-            )
-        );
-
         mPrefItems.add(getResources().getString(R.string.account));
 
         mPrefItems.add(new PrefItem(this, R.drawable.ic_prefs_logout, R.string.logout, Preferences.USERNAME, 0, new PrefItem.OnClickListener() {
