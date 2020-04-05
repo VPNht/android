@@ -16,7 +16,7 @@ import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.OnClick;
 import ht.vpn.android.Preferences;
 import ht.vpn.android.R;
@@ -36,10 +36,10 @@ public class LoginActivity extends BaseActivity implements Validator.ValidationL
     private boolean mDoNotSave = false;
 
     @NotEmpty
-    @Bind(R.id.usernameEdit)
+    @BindView(R.id.usernameEdit)
     EditText mUsername;
     @NotEmpty
-    @Bind(R.id.passwordEdit)
+    @BindView(R.id.passwordEdit)
     EditText mPassword;
 
     @SuppressLint("MissingSuperCall")

@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import ht.vpn.android.R;
 import ht.vpn.android.content.adapters.LogListAdapter;
 
@@ -21,7 +21,7 @@ public class LogFragment extends BaseFragment {
 
     private LogListAdapter mAdapter;
 
-    @Bind(R.id.recyclerView)
+    @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
 
     public LogFragment() {

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import ht.vpn.android.Preferences;
 import ht.vpn.android.R;
 import ht.vpn.android.content.PrefItem;
@@ -28,7 +28,7 @@ public class PreferencesActivity extends BaseActivity {
     private List<Object> mPrefItems = new ArrayList<>();
     private LinearLayoutManager mLayoutManager;
 
-    @Bind(R.id.recyclerView)
+    @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
 
     @Override

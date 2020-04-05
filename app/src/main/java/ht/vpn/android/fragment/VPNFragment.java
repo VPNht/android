@@ -40,7 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.OnClick;
 import de.blinkt.openvpn.VpnProfile;
 import de.blinkt.openvpn.core.ConfigParser;
@@ -91,23 +91,23 @@ public class VPNFragment extends BaseFragment implements VpnStatus.LogListener, 
     private ConnectionStatus mCurrentVPNState = ConnectionStatus.LEVEL_NOTCONNECTED;
     private Marker mCurrentPosMarker;
 
-    @Bind(R.id.scrollView)
+    @BindView(R.id.scrollView)
     TouchableScrollView mScrollView;
-    @Bind(R.id.connectedCard)
+    @BindView(R.id.connectedCard)
     CardView mConnectedCard;
-    @Bind(R.id.connectCard)
+    @BindView(R.id.connectCard)
     CardView mConnectCard;
-    @Bind(R.id.connectButton)
+    @BindView(R.id.connectButton)
     Button mConnectButton;
-    @Bind(R.id.disconnectButton)
+    @BindView(R.id.disconnectButton)
     Button mDisconnectButton;
-    @Bind(R.id.locationSpinner)
+    @BindView(R.id.locationSpinner)
     Spinner mLocationSpinner;
-    @Bind(R.id.firewallSwitch)
+    @BindView(R.id.firewallSwitch)
     CheckBox mFirewallSwitch;
-    @Bind(R.id.ipText)
+    @BindView(R.id.ipText)
     TextView mIPText;
-    @Bind(R.id.locationText)
+    @BindView(R.id.locationText)
     TextView mLocationText;
 
     @Nullable
@@ -331,6 +331,7 @@ public class VPNFragment extends BaseFragment implements VpnStatus.LogListener, 
 
         @Override
         public void failure(RetrofitError error) {
+            Timber.e(error.getMessage());
             if (error.getResponse() != null && error.getResponse().getStatus() == 401) {
                 mActivity.startLoginActivity();
             } else if (error.getCause() instanceof SocketTimeoutException){
@@ -380,7 +381,6 @@ public class VPNFragment extends BaseFragment implements VpnStatus.LogListener, 
 
         @Override
         public void failure(RetrofitError error) {
-            Timber.e(error, error.getMessage());
             Toast.makeText(mActivity, R.string.unknown_error, Toast.LENGTH_SHORT).show();
 
             if(error.getResponse() != null && error.getResponse().getStatus() == 401)
