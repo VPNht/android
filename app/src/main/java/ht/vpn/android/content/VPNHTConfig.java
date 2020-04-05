@@ -37,7 +37,7 @@ public class VPNHTConfig {
         stringList.add("ping 15");
         stringList.add("ping-restart 45");
         stringList.add("ping-timer-rem");
-        stringList.add("ns-cert-type server");
+        stringList.add("remote-cert-tls server");
         stringList.add("mute 10");
         stringList.add("comp-lzo");
         stringList.add("verb 3");
