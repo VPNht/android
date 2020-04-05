@@ -57,6 +57,7 @@ import ht.vpn.android.activities.DisconnectVPN;
 import ht.vpn.android.api.ExternalAppDatabase;
 import de.blinkt.openvpn.core.VpnStatus.ByteCountListener;
 import de.blinkt.openvpn.core.VpnStatus.StateListener;
+import de.blinkt.openvpn.core.IOpenVPNServiceInternal;
 
 import static de.blinkt.openvpn.core.ConnectionStatus.LEVEL_CONNECTED;
 import static de.blinkt.openvpn.core.ConnectionStatus.LEVEL_WAITING_FOR_USER_INPUT;
@@ -124,7 +125,6 @@ public class OpenVPNService extends VpnService implements StateListener, Callbac
         @Override
         public boolean isAllowedExternalApp(String packagename) throws RemoteException {
             return OpenVPNService.this.isAllowedExternalApp(packagename);
-
         }
 
         @Override
@@ -195,8 +195,7 @@ public class OpenVPNService extends VpnService implements StateListener, Callbac
 
     @Override
     public boolean isAllowedExternalApp(String packagename) throws RemoteException {
-        ExternalAppDatabase extapps = new ExternalAppDatabase(OpenVPNService.this);
-        return extapps.checkRemoteActionPermission(this, packagename);
+        return false;
     }
 
     @Override

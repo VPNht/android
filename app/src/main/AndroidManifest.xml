@@ -5,12 +5,14 @@
     <uses-feature
         android:name="android.software.leanback"
         android:required="false" />
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
@@ -70,17 +72,6 @@
             android:excludeFromRecents="true"
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" />
 
-        <activity android:name=".api.GrantPermissionsActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".api.ConfirmDialog">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-
         <service
             android:name="de.blinkt.openvpn.core.OpenVPNService"
             android:permission="android.permission.BIND_VPN_SERVICE"
@@ -110,17 +101,6 @@
                  <action android:name="android.intent.action.QUICKBOOT_POWERON" />
              </intent-filter>
         </receiver>
-
-        <activity android:name=".api.RemoteAction" />
-
-        <activity-alias
-            android:name=".api.ConnectVPN"
-            android:exported="true"
-            android:targetActivity=".api.RemoteAction" />
-        <activity-alias
-            android:name=".api.DisconnectVPN"
-            android:exported="true"
-            android:targetActivity=".api.RemoteAction" />
 
         <meta-data
             android:name="com.google.android.gms.version"

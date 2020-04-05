@@ -11,11 +11,11 @@ android {
     buildToolsVersion "29.0.0"
 
     defaultConfig {
-        applicationId "ht.vpn.android.app"
+        applicationId "ht.vpn.android"
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 15
-        versionName "1.3.0"
+        versionCode 16
+        versionName "1.4.0"
         resValue "string", "geokey", System.getenv("VPNHT_GEO_KEY").toString()
         buildConfigField("boolean", "openvpn3", "true")
     }

@@ -24,16 +24,6 @@
         <item name="android:windowBackground">@color/secondary</item>
     </style>
 
-    <style name="Theme.VPNht.StartButton" parent="Widget.MaterialComponents.Button">
-        <item name="colorButtonNormal">@color/green</item>
-        <item name="android:textColor">@android:color/white</item>
-    </style>
-
-    <style name="Theme.VPNht.StopButton" parent="Widget.MaterialComponents.Button">
-        <item name="colorButtonNormal">@color/red</item>
-        <item name="android:textColor">@android:color/white</item>
-    </style>
-
     <style name="Theme.VPNht.Switch" parent="Widget.AppCompat.CompoundButton.Switch">
         <item name="colorSwitchThumbNormal">@color/primary</item>
         <item name="android:colorForeground">@color/background</item>

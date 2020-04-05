@@ -25,10 +25,13 @@ import android.os.RemoteException;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.method.PasswordTransformationMethod;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+
+import androidx.appcompat.view.ContextThemeWrapper;
 
 import java.io.IOException;
 
@@ -138,13 +141,8 @@ public class LaunchVPN extends Activity {
             mhideLog = intent.getBooleanExtra(EXTRA_HIDELOG, false);
 
             VpnProfile profileToConnect = ProfileManager.get(this, shortcutUUID);
-            if (shortcutName != null && profileToConnect == null) {
+            if (shortcutName != null && profileToConnect == null)
                 profileToConnect = ProfileManager.getInstance(this).getProfileByName(shortcutName);
-                if (!(new ExternalAppDatabase(this).checkRemoteActionPermission(this, getCallingPackage()))) {
-                    finish();
-                    return;
-                }
-            }
 
 
             if (profileToConnect == null) {
@@ -171,8 +169,8 @@ public class LaunchVPN extends Activity {
         dialog.setTitle(getString(R.string.pw_request_dialog_title, getString(type)));
         dialog.setMessage(getString(R.string.pw_request_dialog_prompt, mSelectedProfile.mName));
 
-
-        @SuppressLint("InflateParams") final View userpwlayout = getLayoutInflater().inflate(R.layout.userpass, null, false);
+        LayoutInflater inflater = LayoutInflater.from(new ContextThemeWrapper(getApplicationContext(), R.style.Theme_VPNht));
+        @SuppressLint("InflateParams") final View userpwlayout = inflater.inflate(R.layout.userpass, null, false);
 
         if (type == R.string.password) {
             ((EditText) userpwlayout.findViewById(R.id.username)).setText(mSelectedProfile.mUsername);
@@ -193,37 +191,29 @@ public class LaunchVPN extends Activity {
             dialog.setView(entry);
         }
 
-        AlertDialog.Builder builder = dialog.setPositiveButton(android.R.string.ok,
-                new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+        dialog.setPositiveButton(android.R.string.ok,
+                (callingDialog, which) -> {
+                    if (type == R.string.password) {
+                        mSelectedProfile.mUsername = ((EditText) userpwlayout.findViewById(R.id.username)).getText().toString();
 
-                        if (type == R.string.password) {
-                            mSelectedProfile.mUsername = ((EditText) userpwlayout.findViewById(R.id.username)).getText().toString();
-
-                            String pw = ((EditText) userpwlayout.findViewById(R.id.password)).getText().toString();
-                            if (((CheckBox) userpwlayout.findViewById(R.id.savePassword)).isChecked()) {
-                                mSelectedProfile.mPassword = pw;
-                            } else {
-                                mSelectedProfile.mPassword = null;
-                                mTransientAuthPW = pw;
-                            }
+                        String pw = ((EditText) userpwlayout.findViewById(R.id.password)).getText().toString();
+                        if (((CheckBox) userpwlayout.findViewById(R.id.savePassword)).isChecked()) {
+                            mSelectedProfile.mPassword = pw;
                         } else {
-                            mTransientCertOrPCKS12PW = entry.getText().toString();
+                            mSelectedProfile.mPassword = null;
+                            mTransientAuthPW = pw;
                         }
-                        Intent intent = new Intent(LaunchVPN.this, OpenVPNStatusService.class);
-                        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+                    } else {
+                        mTransientCertOrPCKS12PW = entry.getText().toString();
                     }
-
+                    Intent intent = new Intent(LaunchVPN.this, OpenVPNStatusService.class);
+                    bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
                 });
         dialog.setNegativeButton(android.R.string.cancel,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        VpnStatus.updateStateString("USER_VPN_PASSWORD_CANCELLED", "", R.string.state_user_vpn_password_cancelled,
-                                ConnectionStatus.LEVEL_NOTCONNECTED);
-                        finish();
-                    }
+                (callingDialog, which) -> {
+                    VpnStatus.updateStateString("USER_VPN_PASSWORD_CANCELLED", "", R.string.state_user_vpn_password_cancelled,
+                            ConnectionStatus.LEVEL_NOTCONNECTED);
+                    finish();
                 });
 
         dialog.create().show();

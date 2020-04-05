@@ -141,7 +141,6 @@
                         android:text="@string/firewall" />
                     <CheckBox
                         android:id="@+id/firewallSwitch"
-                        android:theme="@style/Theme.VPNht.Switch"
                         android:duplicateParentState="true"
                         android:layout_width="wrap_content"
                         android:layout_height="24dp"
@@ -161,7 +160,8 @@
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_marginBottom="30dp"
             android:text="@string/connect"
-            android:theme="@style/Theme.VPNht.StartButton" />
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/green" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/disconnectButton"
@@ -172,7 +172,8 @@
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_marginBottom="30dp"
             android:text="@string/disconnect"
-            android:theme="@style/Theme.VPNht.StopButton" />
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/red" />
 
     </LinearLayout>
 </ht.vpn.android.widget.TouchableScrollView>

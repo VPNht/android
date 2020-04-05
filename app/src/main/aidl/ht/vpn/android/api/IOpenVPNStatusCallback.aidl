@@ -5,9 +5,9 @@ package ht.vpn.android.api;
  * synchronous notifications back to its clients.  Note that this is a
  * one-way interface so the server does not block waiting for the client.
  */
-interface IOpenVPNStatusCallback {
+oneway interface IOpenVPNStatusCallback {
     /**
      * Called when the service has a new status for you.
      */
-    oneway void newStatus(in String uuid, in String state, in String message, in String level);
+    void newStatus(String uuid, String state, String message, String level);
 }
