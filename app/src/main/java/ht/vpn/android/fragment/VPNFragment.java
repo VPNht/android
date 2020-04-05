@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.RemoteException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +42,10 @@ import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.OnClick;
+import de.blinkt.openvpn.VpnProfile;
 import de.blinkt.openvpn.core.ConfigParser;
+import de.blinkt.openvpn.core.ConnectionStatus;
+import de.blinkt.openvpn.core.LogItem;
 import de.blinkt.openvpn.core.ProfileManager;
 import de.blinkt.openvpn.core.VPNLaunchHelper;
 import de.blinkt.openvpn.core.VpnStatus;
@@ -49,7 +53,6 @@ import ht.vpn.android.LaunchVPN;
 import ht.vpn.android.Preferences;
 import ht.vpn.android.R;
 import ht.vpn.android.VPNhtApplication;
-import ht.vpn.android.VpnProfile;
 import ht.vpn.android.activities.MainActivity;
 import ht.vpn.android.content.VPNHTConfig;
 import ht.vpn.android.fragment.dialog.ConnectingDialogFragment;
@@ -67,6 +70,13 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 import timber.log.Timber;
 
+import static de.blinkt.openvpn.core.VpnStatus.addLogListener;
+import static de.blinkt.openvpn.core.VpnStatus.addStateListener;
+import static de.blinkt.openvpn.core.VpnStatus.clearLog;
+import static de.blinkt.openvpn.core.VpnStatus.getlogbuffer;
+import static de.blinkt.openvpn.core.VpnStatus.removeLogListener;
+import static de.blinkt.openvpn.core.VpnStatus.removeStateListener;
+
 public class VPNFragment extends BaseFragment implements VpnStatus.LogListener, VpnStatus.StateListener {
 
     private GoogleMap mMap;
@@ -78,7 +88,7 @@ public class VPNFragment extends BaseFragment implements VpnStatus.LogListener, 
     private ArrayList<Server> mServers = new ArrayList<>();
     private HashMap<Marker, Integer> mMarkers = new HashMap<>();
     private MainActivity mActivity;
-    private VpnStatus.ConnectionStatus mCurrentVPNState = VpnStatus.ConnectionStatus.LEVEL_NOTCONNECTED;
+    private ConnectionStatus mCurrentVPNState = ConnectionStatus.LEVEL_NOTCONNECTED;
     private Marker mCurrentPosMarker;
 
     @Bind(R.id.scrollView)
@@ -116,17 +126,17 @@ public class VPNFragment extends BaseFragment implements VpnStatus.LogListener, 
 
         mScrollView.addInterceptScrollView(mMapFragment.getView());
 
-        VpnStatus.addLogListener(this);
-        VpnStatus.addStateListener(this);
+        addLogListener(this);
+        addStateListener(this);
 
         updateIPData();
     }
 
     @Override
     public void onDestroy() {
-        super.onPause();
-        VpnStatus.removeStateListener(this);
-        VpnStatus.removeLogListener(this);
+        super.onDestroy();
+        removeStateListener(this);
+        removeLogListener(this);
     }
 
     @OnClick(R.id.connectButton)
@@ -146,7 +156,7 @@ public class VPNFragment extends BaseFragment implements VpnStatus.LogListener, 
                     return null;
                 }
 
-                VpnStatus.clearLog();
+                clearLog();
                 Server server = mServers.get(spinnerPosition);
                 PrefUtils.save(mActivity, Preferences.LAST_CONNECTED_HOSTNAME, server.hostname);
                 PrefUtils.save(mActivity, Preferences.LAST_CONNECTED_COUNTRY, server.country);
@@ -159,7 +169,7 @@ public class VPNFragment extends BaseFragment implements VpnStatus.LogListener, 
                     profile.mUsername = PrefUtils.get(mActivity, Preferences.USERNAME, "");
                     profile.mPassword = PrefUtils.get(mActivity, Preferences.PASSWORD, "");
                     profile.mAuthenticationType = VpnProfile.TYPE_USERPASS;
-                    ProfileManager.setTemporaryProfile(profile);
+                    ProfileManager.setTemporaryProfile(VPNhtApplication.getAppContext(), profile);
 
 
                     Intent vpnPermissionIntent = VpnService.prepare(mActivity);
@@ -185,9 +195,13 @@ public class VPNFragment extends BaseFragment implements VpnStatus.LogListener, 
     }
 
     @OnClick(R.id.disconnectButton)
-    public void diconnectClick(View v) {
+    void diconnectClick(View v) {
         DisconnectingDialogFragment.show(getChildFragmentManager());
-        mActivity.getService().getManagement().stopVPN();
+        try {
+            mActivity.getService().stopVPN(false);
+        } catch (RemoteException | NullPointerException e) {
+            VpnStatus.logException(e);
+        }
     }
 
     private void updateMapLocation() {
@@ -261,7 +275,7 @@ public class VPNFragment extends BaseFragment implements VpnStatus.LogListener, 
                 mShowsConnected = data.connected;
                 mDetectedCountry = data.country;
 
-                if(!mShowsConnected && mCurrentVPNState.equals(VpnStatus.ConnectionStatus.LEVEL_CONNECTED)) {
+                if(!mShowsConnected && mCurrentVPNState.equals(ConnectionStatus.LEVEL_CONNECTED)) {
                     updateIPData();
                     return;
                 }
@@ -386,19 +400,19 @@ public class VPNFragment extends BaseFragment implements VpnStatus.LogListener, 
     };
 
     @Override
-    public void newLog(VpnStatus.LogItem logItem) {
+    public void newLog(LogItem logItem) {
         Timber.i("%s: %s", logItem.getLogLevel(), logItem.getString(mActivity));
     }
 
     @Override
-    public void updateState(final String state, String logmessage, int localizedResId, final VpnStatus.ConnectionStatus level) {
+    public void updateState(String state, String logmessage, int localizedResId, final ConnectionStatus level, Intent Intent) {
         Timber.d("State: %s", state);
         if(mCurrentVPNState.equals(level))
             return;
 
         mCurrentVPNState = level;
 
-        if(level.equals(VpnStatus.ConnectionStatus.LEVEL_CONNECTED) || level.equals(VpnStatus.ConnectionStatus.LEVEL_NOTCONNECTED)) {
+        if(level.equals(ConnectionStatus.LEVEL_CONNECTED) || level.equals(ConnectionStatus.LEVEL_NOTCONNECTED)) {
             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -412,20 +426,20 @@ public class VPNFragment extends BaseFragment implements VpnStatus.LogListener, 
         ThreadUtils.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(level.equals(VpnStatus.ConnectionStatus.LEVEL_CONNECTED)) {
+                if(level.equals(ConnectionStatus.LEVEL_CONNECTED)) {
                     mConnectButton.setVisibility(View.GONE);
                     mConnectedCard.setVisibility(View.VISIBLE);
                     mConnectCard.setVisibility(View.GONE);
                     mDisconnectButton.setVisibility(View.VISIBLE);
-                } else if(level.equals(VpnStatus.ConnectionStatus.LEVEL_NOTCONNECTED)) {
+                } else if(level.equals(ConnectionStatus.LEVEL_NOTCONNECTED)) {
                     mConnectedCard.setVisibility(View.GONE);
                     mDisconnectButton.setVisibility(View.GONE);
                     mConnectButton.setVisibility(View.VISIBLE);
                     mConnectCard.setVisibility(View.VISIBLE);
 
-                    if(VpnStatus.getlogbuffer().length > 10) {
-                        for(int i = VpnStatus.getlogbuffer().length - 10; i < VpnStatus.getlogbuffer().length; i++) {
-                            VpnStatus.LogItem log = VpnStatus.getlogbuffer()[i];
+                    if(getlogbuffer().length > 10) {
+                        for(int i = getlogbuffer().length - 10; i < getlogbuffer().length; i++) {
+                            LogItem log = getlogbuffer()[i];
                             String logString = log.getString(mActivity);
                             if (logString.contains("Cannot open TUN")) {
                                 Timber.d("NEEDS REBOOT");
@@ -439,5 +453,10 @@ public class VPNFragment extends BaseFragment implements VpnStatus.LogListener, 
                 }
             }
         });
+    }
+
+    @Override
+    public void setConnectedVPN(String uuid) {
+
     }
 }

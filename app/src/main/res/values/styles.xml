@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="Theme.VPNht" parent="Theme.MaterialComponents.NoActionBar.Bridge">
+    <style name="Theme.VPNht" parent="Theme.MaterialComponents.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/secondary</item>
@@ -24,23 +24,14 @@
         <item name="android:windowBackground">@color/secondary</item>
     </style>
 
-    <style name="Theme.VPNht.SecondaryButton" parent="Widget.AppCompat.Button">
-        <item name="colorButtonNormal">@color/background</item>
-        <item name="android:textColor">@android:color/black</item>
-    </style>
-
-    <style name="Theme.VPNht.StartButton" parent="Widget.AppCompat.Button">
+    <style name="Theme.VPNht.StartButton" parent="Widget.MaterialComponents.Button">
         <item name="colorButtonNormal">@color/green</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
 
-    <style name="Theme.VPNht.StopButton" parent="Widget.AppCompat.Button">
+    <style name="Theme.VPNht.StopButton" parent="Widget.MaterialComponents.Button">
         <item name="colorButtonNormal">@color/red</item>
         <item name="android:textColor">@android:color/white</item>
-    </style>
-
-    <style name="Theme.VPNht.PrimaryButton" parent="Widget.AppCompat.Button">
-        <item name="colorButtonNormal">@color/primary</item>
     </style>
 
     <style name="Theme.VPNht.Switch" parent="Widget.AppCompat.CompoundButton.Switch">
@@ -48,7 +39,7 @@
         <item name="android:colorForeground">@color/background</item>
     </style>
 
-    <style name="Theme.VPNht.Spinner" parent="Base.Widget.AppCompat.Spinner.Underlined">
+    <style name="Theme.VPNht.Spinner" parent="Widget.AppCompat.Spinner.Underlined">
 
     </style>
 

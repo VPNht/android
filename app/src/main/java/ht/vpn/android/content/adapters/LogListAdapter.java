@@ -14,9 +14,10 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Vector;
 
+import de.blinkt.openvpn.VpnProfile;
+import de.blinkt.openvpn.core.LogItem;
 import de.blinkt.openvpn.core.VpnStatus;
 import ht.vpn.android.Preferences;
-import ht.vpn.android.VpnProfile;
 import ht.vpn.android.utils.PixelUtils;
 import ht.vpn.android.utils.PrefUtils;
 import ht.vpn.android.utils.ThreadUtils;
@@ -29,8 +30,8 @@ public class LogListAdapter extends RecyclerView.Adapter<LogListAdapter.ViewHold
     private int mLogLevel = VpnProfile.MAXLOGLEVEL;
     private RecyclerView mRecyclerView;
 
-    private Vector<VpnStatus.LogItem> mLogEntries = new Vector<VpnStatus.LogItem>();
-    private Vector<VpnStatus.LogItem> mLevelLogEntries = new Vector<VpnStatus.LogItem>();
+    private Vector<LogItem> mLogEntries = new Vector<LogItem>();
+    private Vector<LogItem> mLevelLogEntries = new Vector<LogItem>();
 
     public LogListAdapter(Context context, RecyclerView recyclerView) {
         initLogBuffer();
@@ -53,7 +54,7 @@ public class LogListAdapter extends RecyclerView.Adapter<LogListAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(LogListAdapter.ViewHolder viewHolder, int position) {
-        VpnStatus.LogItem item = mLevelLogEntries.get(position);
+        LogItem item = mLevelLogEntries.get(position);
         String text = getTime(item) + " " + item.getString(mContext);
         viewHolder.itemView.setText(text);
     }
@@ -69,7 +70,7 @@ public class LogListAdapter extends RecyclerView.Adapter<LogListAdapter.ViewHold
     }
 
     @Override
-    public void newLog(VpnStatus.LogItem logItem) {
+    public void newLog(LogItem logItem) {
         if(mLogEntries.size() == MAX_LOG_ENTRIES) {
             mLevelLogEntries.remove(mLogEntries.get(0));
             mLogEntries.removeElementAt(0);
@@ -95,13 +96,13 @@ public class LogListAdapter extends RecyclerView.Adapter<LogListAdapter.ViewHold
 
     private void initLevelEntries() {
         mLevelLogEntries.clear();
-        for(VpnStatus.LogItem li: mLogEntries) {
+        for(LogItem li: mLogEntries) {
             if (li.getVerbosityLevel() <= mLogLevel || mLogLevel == VpnProfile.MAXLOGLEVEL)
                 mLevelLogEntries.add(li);
         }
     }
 
-    private String getTime(VpnStatus.LogItem le) {
+    private String getTime(LogItem le) {
         Date d = new Date(le.getLogtime());
         SimpleDateFormat timeformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
         return timeformat.format(d);
@@ -109,7 +110,7 @@ public class LogListAdapter extends RecyclerView.Adapter<LogListAdapter.ViewHold
 
     public String getLogAsString() {
         StringBuilder stringBuilder = new StringBuilder();
-        for (VpnStatus.LogItem entry : mLogEntries) {
+        for (LogItem entry : mLogEntries) {
             stringBuilder.append(getTime(entry));
             stringBuilder.append(' ');
             stringBuilder.append(entry.getString(mContext));
@@ -118,10 +119,10 @@ public class LogListAdapter extends RecyclerView.Adapter<LogListAdapter.ViewHold
         return stringBuilder.toString();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
         TextView itemView;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             this.itemView = (TextView) itemView;
         }

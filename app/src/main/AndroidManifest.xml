@@ -2,16 +2,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="ht.vpn.android">
 
+    <uses-feature
+        android:name="android.software.leanback"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:name=".VPNhtApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:banner="@drawable/banner"
+        android:extractNativeLibs="true"
         android:label="@string/app_name"
         android:theme="@style/Theme.VPNht">
 
@@ -63,13 +70,30 @@
             android:excludeFromRecents="true"
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" />
 
+        <activity android:name=".api.GrantPermissionsActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".api.ConfirmDialog">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+
         <service
             android:name="de.blinkt.openvpn.core.OpenVPNService"
-            android:permission="android.permission.BIND_VPN_SERVICE">
+            android:permission="android.permission.BIND_VPN_SERVICE"
+            android:process=":openvpn">
             <intent-filter>
                 <action android:name="android.net.VpnService" />
             </intent-filter>
         </service>
+
+        <service
+            android:name="de.blinkt.openvpn.core.OpenVPNStatusService"
+            android:exported="false"
+            android:process=":openvpn" />
 
         <service
             android:name=".api.ExternalOpenVPNService"
@@ -86,6 +110,17 @@
                  <action android:name="android.intent.action.QUICKBOOT_POWERON" />
              </intent-filter>
         </receiver>
+
+        <activity android:name=".api.RemoteAction" />
+
+        <activity-alias
+            android:name=".api.ConnectVPN"
+            android:exported="true"
+            android:targetActivity=".api.RemoteAction" />
+        <activity-alias
+            android:name=".api.DisconnectVPN"
+            android:exported="true"
+            android:targetActivity=".api.RemoteAction" />
 
         <meta-data
             android:name="com.google.android.gms.version"

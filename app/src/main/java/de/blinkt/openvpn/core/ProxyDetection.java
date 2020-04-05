@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014 Arne Schwabe
+ * Copyright (c) 2012-2016 Arne Schwabe
  * Distributed under the GNU GPL v2 with additional terms. For full terms see the file doc/LICENSE.txt
  */
 
@@ -15,7 +15,7 @@ import java.net.URL;
 import java.util.List;
 
 import ht.vpn.android.R;
-import ht.vpn.android.VpnProfile;
+import de.blinkt.openvpn.VpnProfile;
 
 public class ProxyDetection {
 	static SocketAddress detectProxy(VpnProfile vp) {

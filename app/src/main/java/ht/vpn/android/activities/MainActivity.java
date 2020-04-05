@@ -1,5 +1,6 @@
 package ht.vpn.android.activities;
 
+import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import de.blinkt.openvpn.core.ConnectionStatus;
+import de.blinkt.openvpn.core.IOpenVPNServiceInternal;
 import de.blinkt.openvpn.core.OpenVPNService;
 import de.blinkt.openvpn.core.VpnStatus;
 import ht.vpn.android.Preferences;
@@ -19,9 +22,10 @@ import ht.vpn.android.utils.PrefUtils;
 
 public class MainActivity extends BaseActivity implements VpnStatus.StateListener {
 
-    private OpenVPNService mService;
+    private IOpenVPNServiceInternal mService;
     private Boolean mConnected = false;
 
+    @SuppressLint("MissingSuperCall")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState, R.layout.activity_main);
@@ -88,9 +92,7 @@ public class MainActivity extends BaseActivity implements VpnStatus.StateListene
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            OpenVPNService.LocalBinder binder = (OpenVPNService.LocalBinder) service;
-            mService = binder.getService();
+            mService = IOpenVPNServiceInternal.Stub.asInterface(service);
         }
 
         @Override
@@ -99,13 +101,17 @@ public class MainActivity extends BaseActivity implements VpnStatus.StateListene
         }
     };
 
-    public OpenVPNService getService() {
+    public IOpenVPNServiceInternal getService() {
         return mService;
     }
 
     @Override
-    public void updateState(String state, String logmessage, int localizedResId, VpnStatus.ConnectionStatus level) {
-        mConnected = level.equals(VpnStatus.ConnectionStatus.LEVEL_CONNECTED);
+    public void updateState(String state, String logmessage, int localizedResId, ConnectionStatus level, Intent Intent) {
+        mConnected = level.equals(ConnectionStatus.LEVEL_CONNECTED);
         supportInvalidateOptionsMenu();
+    }
+
+    @Override
+    public void setConnectedVPN(String uuid) {
     }
 }

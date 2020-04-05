@@ -4,6 +4,7 @@ package ht.vpn.android.fragment.dialog;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,6 +12,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import de.blinkt.openvpn.core.ConnectionStatus;
 import de.blinkt.openvpn.core.VpnStatus;
 import ht.vpn.android.R;
 import ht.vpn.android.utils.ThreadUtils;
@@ -74,7 +76,7 @@ public class ConnectingDialogFragment extends DialogFragment implements VpnStatu
     }
 
     @Override
-    public void updateState(final String state, String logmessage, final int localizedResId, VpnStatus.ConnectionStatus level) {
+    public void updateState(final String state, String logmessage, final int localizedResId, ConnectionStatus level, Intent intent) {
         ThreadUtils.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -83,6 +85,10 @@ public class ConnectingDialogFragment extends DialogFragment implements VpnStatu
                 }
             }
         });
+    }
+
+    @Override
+    public void setConnectedVPN(String uuid) {
     }
 
 }

@@ -52,7 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:layout_marginLeft="4dp"
-        android:text="@string/save_credentials"
+        android:text="@string/save_password"
         android:layout_marginRight="4dp"
         android:layout_marginBottom="16dp"/>
 

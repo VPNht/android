@@ -14,6 +14,7 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.io.StringReader;
 
+import de.blinkt.openvpn.VpnProfile;
 import de.blinkt.openvpn.core.ConfigParser;
 import de.blinkt.openvpn.core.ProfileManager;
 import de.blinkt.openvpn.core.VPNLaunchHelper;
@@ -46,7 +47,7 @@ public class OnBootReceiver extends BroadcastReceiver {
             configParser.parseConfig(new StringReader(VPNHTConfig.generate(PrefUtils.getPrefs(context), server, PrefUtils.get(context, Preferences.LAST_CONNECTED_FIREWALL, false))));
             VpnProfile profile = configParser.convertProfile();
             profile.mName = server.country;
-            ProfileManager.setTemporaryProfile(profile);
+            ProfileManager.setTemporaryProfile(VPNhtApplication.getAppContext(), profile);
 
             Intent intent = new Intent(context, LaunchVPN.class);
             intent.setAction(Intent.ACTION_MAIN);

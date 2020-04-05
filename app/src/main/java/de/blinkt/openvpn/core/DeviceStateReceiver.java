@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014 Arne Schwabe
+ * Copyright (c) 2012-2016 Arne Schwabe
  * Distributed under the GNU GPL v2 with additional terms. For full terms see the file doc/LICENSE.txt
  */
 
@@ -15,14 +15,16 @@ import android.net.NetworkInfo.State;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 
-import java.util.LinkedList;
-
-import de.blinkt.openvpn.core.VpnStatus.ByteCountListener;
 import ht.vpn.android.R;
+import de.blinkt.openvpn.core.VpnStatus.ByteCountListener;
+
+import java.util.LinkedList;
+import java.util.Objects;
+import java.util.StringTokenizer;
 
 import static de.blinkt.openvpn.core.OpenVPNManagement.pauseReason;
 
-public class DeviceStateReceiver extends BroadcastReceiver implements ByteCountListener {
+public class DeviceStateReceiver extends BroadcastReceiver implements ByteCountListener, OpenVPNManagement.PausedStateCallback {
     private final Handler mDisconnectHandler;
     private int lastNetwork = -1;
     private OpenVPNManagement mManagement;
@@ -41,7 +43,7 @@ public class DeviceStateReceiver extends BroadcastReceiver implements ByteCountL
     connectState userpause = connectState.SHOULDBECONNECTED;
 
     private String lastStateMsg = null;
-    private Runnable mDelayDisconnectRunnable = new Runnable() {
+    private java.lang.Runnable mDelayDisconnectRunnable = new Runnable() {
         @Override
         public void run() {
             if (!(network == connectState.PENDINGDISCONNECT))
@@ -58,13 +60,18 @@ public class DeviceStateReceiver extends BroadcastReceiver implements ByteCountL
     };
     private NetworkInfo lastConnectedNetwork;
 
-    enum connectState {
+    @Override
+    public boolean shouldBeRunning() {
+        return shouldBeConnected();
+    }
+
+    private enum connectState {
         SHOULDBECONNECTED,
         PENDINGDISCONNECT,
         DISCONNECTED
     }
 
-    static class Datapoint {
+    private static class Datapoint {
         private Datapoint(long t, long d) {
             timestamp = t;
             data = d;
@@ -74,7 +81,7 @@ public class DeviceStateReceiver extends BroadcastReceiver implements ByteCountL
         long data;
     }
 
-    LinkedList<Datapoint> trafficdata = new LinkedList<Datapoint>();
+    private LinkedList<Datapoint> trafficdata = new LinkedList<>();
 
 
     @Override
@@ -96,7 +103,7 @@ public class DeviceStateReceiver extends BroadcastReceiver implements ByteCountL
         if (windowtraffic < TRAFFIC_LIMIT) {
             screen = connectState.DISCONNECTED;
             VpnStatus.logInfo(R.string.screenoff_pause,
-                    OpenVPNService.humanReadableByteCount(TRAFFIC_LIMIT, false), TRAFFIC_WINDOW);
+                    "64 kB", TRAFFIC_WINDOW);
 
             mManagement.pause(getPauseReason());
         }
@@ -122,13 +129,14 @@ public class DeviceStateReceiver extends BroadcastReceiver implements ByteCountL
     public DeviceStateReceiver(OpenVPNManagement magnagement) {
         super();
         mManagement = magnagement;
+        mManagement.setPauseCallback(this);
         mDisconnectHandler = new Handler();
     }
 
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences prefs = Preferences.getDefaultSharedPreferences(context);
 
 
         if (ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
@@ -166,15 +174,15 @@ public class DeviceStateReceiver extends BroadcastReceiver implements ByteCountL
     private void fillTrafficData() {
         trafficdata.add(new Datapoint(System.currentTimeMillis(), TRAFFIC_LIMIT));
     }
+
     public static boolean equalsObj(Object a, Object b) {
         return (a == null) ? (b == null) : a.equals(b);
     }
 
 
-
     public void networkStateChange(Context context) {
         NetworkInfo networkInfo = getCurrentNetworkInfo(context);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences prefs = Preferences.getDefaultSharedPreferences(context);
         boolean sendusr1 = prefs.getBoolean("netchangereconnect", true);
 
 
@@ -223,7 +231,7 @@ public class DeviceStateReceiver extends BroadcastReceiver implements ByteCountL
                 mDisconnectHandler.removeCallbacks(mDelayDisconnectRunnable);
                 // Reprotect the sockets just be sure
                 mManagement.networkChange(true);
-            }  else {
+            } else {
                 /* Different network or connection not established anymore */
 
                 if (screen == connectState.PENDINGDISCONNECT)
@@ -232,8 +240,8 @@ public class DeviceStateReceiver extends BroadcastReceiver implements ByteCountL
                 if (shouldBeConnected()) {
                     mDisconnectHandler.removeCallbacks(mDelayDisconnectRunnable);
 
-                    if (pendingDisconnect)
-                        mManagement.networkChange(false);
+                    if (pendingDisconnect || !sameNetwork)
+                        mManagement.networkChange(sameNetwork);
                     else
                         mManagement.resume();
                 }
@@ -254,6 +262,8 @@ public class DeviceStateReceiver extends BroadcastReceiver implements ByteCountL
 
         if (!netstatestring.equals(lastStateMsg))
             VpnStatus.logInfo(R.string.netstatus, netstatestring);
+        VpnStatus.logDebug(String.format("Debug state info: %s, pause: %s, shouldbeconnected: %s, network: %s ",
+                netstatestring, getPauseReason(), shouldBeConnected(), network));
         lastStateMsg = netstatestring;
 
     }
