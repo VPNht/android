@@ -5,7 +5,7 @@ import retrofit.RestAdapter;
 import retrofit.http.GET;
 
 public class IPService {
-    private static final String API_URL = "http://myip.ht/";
+    private static final String API_URL = "https://myip.ht/";
     private Client mClient;
 
     private IPService() {
