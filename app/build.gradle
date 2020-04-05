@@ -7,16 +7,17 @@ plugins {
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion "28.0.3"
+    compileSdkVersion 29
+    buildToolsVersion "29.0.0"
 
     defaultConfig {
         applicationId "ht.vpn.android.app"
         minSdkVersion 23
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 15
         versionName "1.3.0"
         resValue "string", "geokey", System.getenv("VPNHT_GEO_KEY").toString()
+        buildConfigField("boolean", "openvpn3", "true")
     }
 
     signingConfigs {
@@ -38,10 +39,6 @@ android {
             applicationIdSuffix ".dev"
         }
     }
-}
-
-ext {
-    supportLibVersion = "28.0.0"
 }
 
 // ./gradlew(.bat) dependencyUpdates -Drevision=release
